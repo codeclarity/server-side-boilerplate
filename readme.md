@@ -20,7 +20,7 @@ as we would like to iron out all of the dirty little details we can. As of right
 
 # Team
 Project is ran and sponsored by Joshua Canfield of Code Clarity (TM). We will be releasing a Wordpress Framework along with our Freelancer's Client Login with-in the
-next few months. Any questions can be directed to support@icodeclarity.com. This project is licensed as 100% Free-Use.
+next few months. Any questions can be directed to support@icodeclarity.com. This project is licensed under The PostgreSQL License (PostgreSQL).
 
 # License
 
@@ -29,6 +29,6 @@ Copyright (c) 2011-2012, Code Clarity (Joshua Canfield) <www.icodeclarity.com>
 
 Permission to use, copy, modify, and distribute this software and its documentation for any purpose, without fee, and without a written agreement is hereby granted, provided that the above copyright notice and this paragraph and the following two paragraphs appear in all copies.
 
-IN NO EVENT SHALL $ORGANISATION BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF $ORGANISATION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+IN NO EVENT SHALL CODE CLARITY (Joshua Canfield) BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF CODE CLARITY (Joshua Canfield) HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 CODE CLARITY (Joshua Canfield) SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND CODE CLARITY (Joshua Canfield) HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
