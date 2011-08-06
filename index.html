@@ -1,19 +1,23 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
 	<title>Website Name - Brief Description for SEO</title>
-	<meta name="description" content="Brief description of Website. Attempt to keep this short or atleast under 150 words"/>
-	<link rel="canonical" href="http://www.websitename.com/index.php" />
+	<!-- Website Title and Description should be brief and the Title should contain Business/Website Name along with Keywords -->
+	<meta name="description" content="Brief description of Website. Attempt to keep this short or atleast under 150 words"/>	
+	<!-- Control Content-Type and X-UA Compatablity | Can remove charset for UTF-8 since that's forced by .htaccess -->
 	<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     <meta http-equiv="Content-Style-Type" content="text/css" />
     <meta http-equiv="X-UA-Compatible" content="IE=9,chrome=1" />
     <meta http-equiv="X-UA-Compatible" content="env=best-standards-support" />
+    <!-- Canonical link will allow search engines to know the difference between multiple pages names for the same page | Typically used with Dynamic page naming with Wordpress and other systems -->
+    <link rel="canonical" href="http://www.websitename.com/index.php" />
     
     <link rel="shortcut icon" type="image/x-icon" href="./favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
+    <!-- DublinCore -->
     <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
     <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
     <meta name="DC.title" lang="en" content="Website Title and Brief Description for DublinCore" />
@@ -25,39 +29,45 @@
     <meta name="DC.format" scheme="DCTERMS.IMT" content="text/html" />
     <meta name="DC.type" scheme="DCTERMS.DCMIType" content="Text" />
     
-    <!--[if lt IE 8]>
-    // Google Frame Installer for Internet Explorer 8 and Below
+    <!--[if lt IE 8]> // Google Frame Installer for Internet Explorer 8 and Below
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
     <![endif]-->
     
-    <link media="screen, print, projections" rel="stylesheet" type="text/css" href="websitename/styles.css" />
-    
+    <!-- Secondary Meta-Tags | No use for Robots or Cache-Control since those are handled by htaccess and robots.txt -->
     <meta http-equiv="content-language" content="en" />
     <meta name="keywords" content="website, keywords, try, to, keep, under, fifteen, keywords, here"/>
     <meta name="author" content="Website Author"/>
     <meta name="copyright" content="Copyright Information"/>
-    <meta name="revisit-after" content="2 days"/>
-    <meta http-equiv="expires" content="Never"/>
     <meta name="distribution" content="global"/>
-    <meta name="robots" content="all"/>
     <meta name="rating" content="general"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Geo Location Meta Tags | Use Google Maps with Labs Addon to find exact position of your business or location -->
     <meta name="ICBM" content="39.953, -105.170" />
     <meta name="geo.position" content="39.953, -105.170" />
     <meta name="geo.placename" content="City, State, United States" />
     <meta name="geo.region" content="co-us" />
-    <link href="http://feeds.feedburner.com/websitename" rel="alternate" type="application/rss+xml" title="News Feed for Website" />
     
     <!--[if lt IE 9]>
 	// Internet Explorer 9 and Below Scripts and Stylesheets
     <script type="text/javascript" src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+	<!-- Start of User Javascript and Styles | I typically use Head.js for Async Loading and Additional CSS class names by Page Name and Browser Agent -->
+	<link media="screen, print, projections" rel="stylesheet" type="text/css" href="websitename/styles.css" />
+	<style type="text/css">
+	/* Avoid at all costs using CSS in-line on elements and in the Header without directing to a Stylesheet */
+	body { font-size: 87%; font-family: "Liberation Sans","Droid Sans",Arial,Sans,sans-serif;}
+	h1 {float:left;display: inline;width: 100%;text-align: center;color:#1b1b1b;text-shadow: 0 1px 0 #1b1b1b, 0 -1px 0 #fafafa;font-weight:bold;font-size:16px;}
+	p {float: left;display: inline;width: 100%;text-align: center;color:#1c1c1c;font-size:12px;}
+	</style>
+	<-- In Theory all Javascript should be loaded at the bottom of your website. Usage of Head.js & other similar projects help with that method -->
+    <link href="http://feeds.feedburner.com/websitename" rel="alternate" type="application/rss+xml" title="News Feed for Website" />
     <script src="http://code.jquery.com/jquery-1.6.2.min.js" type="text/javascript"></script>
     <script src="websitename/javascript.js" type="text/javascript"></script>
 
     <script type="text/javascript">
       // Google Analytics Script
+      // Look into adding Advanced API code to track specific events.
+      // There is a great jQuery Plugin for Google Analytics that makes event tracking and GA easy
     </script>
 
 </head>
