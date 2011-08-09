@@ -14,15 +14,20 @@
 # FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND CODE CLARITY (Joshua Canfield) HAS NO OBLIGATIONS TO 
 # PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-# BEGIN Basic Settings
+# Thanks to Code-Kickoff (http://www.codekickoff.com/), AskApache.org, @Zywigby (Charlie Key - http://forr.st/~IG8) and others. 
+# (If you see your code snippets, please notify me.)
+
+# Basic Settings (Allowing Execution of CGI Scripts, Following Symbolic Links and Not Allowing Public Viewing of Folders without an Index file)
 Options  +execCGI +FollowSymLinks
 Options All -Indexes
 
+# Basic Error Documents (Will add more soon. I typically have all error messages filter through a PHP file and use 404.php to display the error and direct the user)
 ErrorDocument 404 /404.php
 ErrorDocument 401 /404.php
 ErrorDocument 403 /404.php
 ErrorDocument 500 /404.php
 
+# Restrict Access to Domain/Folder by Order and Allow (My current setup blocks known spammers that have DDoS Attacked me recently. Remove deny rules if needed)
 order allow,deny
 deny from 205.203.134.197
 deny from 109.230.246.24
@@ -31,17 +36,20 @@ deny from 85.17.26.196
 deny from 109.230.246.*
 allow from all
 
-# Remove ETags
+# Remove ETags (To learn more visit http://developer.yahoo.com/performance/rules.html#etags)
 Header unset ETag
 FileETag None
 
-# Begin - Redirect Mobile Browser Accessing /siteurltoredirect
-# Courtesy of @Zywigby (Charlie Key) http://forr.st/~IG8
-RewriteCond %{HTTP_USER_AGENT} "android|blackberry|ipad|iphone|ipod|iemobile|opera mobile|palmos|webos|googlebot-mobile" [NC]
-RewriteRule ^siteurltoredirect$ http://theendpointurl.com [R,L]
-# End - Redirect Mobile Browser Accessing /siteurltoredirect
+# Use standardized UTF-8 for text/plain or text/html
+AddDefaultCharset utf-8
+# Force UTF-8 Character Set for specific File Types
+AddCharset utf-8 .html .css .js .xml .json .rss
 
-# BEGIN GZip & Compression
+# Redirect Mobile Browser Accessing /siteurltoredirect
+RewriteCond %{HTTP_USER_AGENT} "android|blackberry|ipad|iphone|ipod|iemobile|opera mobile|palmos|webos|googlebot-mobile" [NC]
+RewriteRule ^yourdomain.com$ http://mobile.yourdomain.com [R,L]
+
+# Gzip and Compression
 <IfModule mod_headers.c>
     <IfModule mod_mime.c>
         # Add custom mime type, to be able to use it in the 'AddOutputFilterByType' declaration (gzip font-face files: http://www.phpied.com/gzip-your-font-face-files/)
@@ -91,9 +99,32 @@ RewriteRule ^siteurltoredirect$ http://theendpointurl.com [R,L]
     </FilesMatch>
 </IfModule>
 
-# BEGIN EXPIRES
-Header unset ETag
-FileETag None
+# Force the latest IE version, in various cases when it may fall back to IE7 mode
+#  github.com/rails/rails/commit/123eb25#commitcomment-118920
+# Use ChromeFrame if it's installed for a better experience for the poor IE folk
+<IfModule mod_setenvif.c>
+  <IfModule mod_headers.c>
+    BrowserMatch MSIE ie
+    Header set X-UA-Compatible "IE=Edge,chrome=1" env=ie
+  </IfModule>
+</IfModule>
+
+# Allow combination of Javascript and CSS Stylesheets
+# ie. Inside of script.combined.js you could have
+#   <!--#include file="jquery-1.4.2.js" -->
+#   <!--#include file="jquery.idletimer.js" -->
+# and they would be included into this single file
+# this is not in use in the boilerplate as it stands. you may
+#   choose to name your files in this way for this advantage
+#   or concatenate and minify them manually.
+# Disabled by default.
+
+# <FilesMatch "\.combined\.(js|css)$">
+#         Options +Includes
+#         SetOutputFilter INCLUDES
+# </FilesMatch>
+
+# Setup Cache-Control and Expires by File Types
 <IfModule mod_expires.c>
     <FilesMatch "\.(gif|jpg|jpeg|png|swf|flv|pdf|ico|avi|mov|ppt|doc|mp3|wmv|wav|txt|css|js|html?|php|xml|eot|ttf|otf|woff)$">
         ExpiresActive On
@@ -112,7 +143,7 @@ FileETag None
     </FilesMatch>
 </IfModule>
 
-# BEGIN CACHING
+# Caching by Content Type using mod_expires.c
 <IfModule mod_expires.c>
 ExpiresActive On
 ExpiresDefault A86400
@@ -129,28 +160,33 @@ ExpiresByType application/pdf A604800
 ExpiresByType text/html A900
 </IfModule>
 
-# 3 Month
+# Cache-Control by File Type
 <FilesMatch "\.(flv|gif|jpg|jpeg|png|ico|swf)$">
-    Header set Cache-Control "max-age=7257600"
+    Header set Cache-Control "max-age=7257600" # 3 Month
 </FilesMatch>
-# 1 Week
 <FilesMatch "\.(js|css|pdf|txt)$">
-    Header set Cache-Control "max-age=604800"
+    Header set Cache-Control "max-age=604800" # 1 Week
 </FilesMatch>
-# 10 Minutes
 <FilesMatch "\.(html|htm)$">
-    Header set Cache-Control "max-age=600"
+    Header set Cache-Control "max-age=600" # 10 Minutes
 </FilesMatch>
-# NONE
 <FilesMatch "\.(pl|php|cgi|spl)$">
     Header unset Cache-Control
     Header unset Expires
     Header unset Last-Modified
     FileETag None
-    Header unset Pragma
+    Header unset Pragma # NONE
 </FilesMatch>
 
-# BEGIN Redirects from previous versions
+# Redirect old links or pages using 301
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /
+	RewriteRule ^somedirectory/(.*)$ http://yourdomain.com/page.php [L,R=301] # Redirect Directory to Specific Page
+	RewriteRule ^page.html$ http://www.yourdomain.com/newpage.php [L,R=301] # Redirect Specific Page to Specific Page
+</IfModule>
+
+# Redirect Bad Bots and Spammers
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
@@ -256,5 +292,4 @@ RewriteCond %{HTTP_USER_AGENT} ^Widow [OR]
 RewriteCond %{HTTP_USER_AGENT} ^WWWOFFLE [OR]
 RewriteCond %{HTTP_USER_AGENT} ^Xaldon\ WebSpider [OR]
 RewriteCond %{HTTP_USER_AGENT} ^Zeus
-RewriteRule ^somedirectory/(.*)$ http://yourDomain.com/someFile.php [L,R=301]
 </IfModule>
