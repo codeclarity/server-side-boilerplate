@@ -7,27 +7,30 @@
 # Permission to use, copy, modify, and distribute this software and its documentation for any purpose, without fee, and without a written agreement is 
 # hereby granted, provided that the above copyright notice and this paragraph and the following two paragraphs appear in all copies.
 # 
-# IN NO EVENT SHALL $ORGANISATION BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS,     
+# IN NO EVENT SHALL CODE CLARITY (Joshua Canfield) BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS,     
 # ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF $ORGANISATION HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # 
 # CODE CLARITY (Joshua Canfield) SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
 # FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND CODE CLARITY (Joshua Canfield) HAS NO OBLIGATIONS TO 
 # PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
-# Thanks to Code-Kickoff (http://www.codekickoff.com/), AskApache.org, @Zywigby (Charlie Key - http://forr.st/~IG8) and others. 
+# Thanks to Code-Kickoff (http://www.codekickoff.com/), yourdomain.org, @Zywigby (Charlie Key - http://forr.st/~IG8) and others. 
 # (If you see your code snippets, please notify me.)
 
-# Basic Settings (Allowing Execution of CGI Scripts, Following Symbolic Links and Not Allowing Public Viewing of Folders without an Index file)
+## Basic Settings 
+# (Allowing Execution of CGI Scripts, Following Symbolic Links and Not Allowing Public Viewing of Folders without an Index file)
 Options  +execCGI +FollowSymLinks
 Options All -Indexes
 
-# Basic Error Documents (Will add more soon. I typically have all error messages filter through a PHP file and use 404.php to display the error and direct the user)
+## Basic Error Documents 
+# (Will add more soon. I typically have all error messages filter through a PHP file and use 404.php to display the error and direct the user)
 ErrorDocument 404 /404.php
 ErrorDocument 401 /404.php
 ErrorDocument 403 /404.php
 ErrorDocument 500 /404.php
 
-# Restrict Access to Domain/Folder by Order and Allow (My current setup blocks known spammers that have DDoS Attacked me recently. Remove deny rules if needed)
+## Restrict Access to Domain/Folder by Order and Allow 
+# (My current setup blocks known spammers that have DDoS Attacked me recently. Remove deny rules if needed)
 order allow,deny
 deny from 205.203.134.197
 deny from 109.230.246.24
@@ -36,71 +39,81 @@ deny from 85.17.26.196
 deny from 109.230.246.*
 allow from all
 
-# Remove ETags (To learn more visit http://developer.yahoo.com/performance/rules.html#etags)
+#3 Remove ETags (To learn more visit http://developer.yahoo.com/performance/rules.html#etags)
 Header unset ETag
 FileETag None
 
-# Use standardized UTF-8 for text/plain or text/html
+## Use standardized UTF-8 for text/plain or text/html
 AddDefaultCharset utf-8
-# Force UTF-8 Character Set for specific File Types
+## Force UTF-8 Character Set for specific File Types
 AddCharset utf-8 .html .css .js .xml .json .rss
+DefaultLanguage en-US
 
-# Redirect Mobile Browser Accessing /siteurltoredirect
-RewriteCond %{HTTP_USER_AGENT} "android|blackberry|ipad|iphone|ipod|iemobile|opera mobile|palmos|webos|googlebot-mobile" [NC]
-RewriteRule ^yourdomain.com$ http://mobile.yourdomain.com [R,L]
+## htaccess for mod_php
+# SetEnv PHPRC /location/todir/containing/phpinifile
 
-# Gzip and Compression
+## htaccess for PHP as CGI
+# AddHandler php-cgi .php .htm
+# Action php-cgi /cgi-bin/php5.cgi
+
+## Disallow Script Execution
+# Options -ExecCGI
+# AddHandler cgi-script .php .pl .py .jsp .asp .htm .shtml .sh .cgi
+
+## Redirect Mobile Browser Accessing /siteurltoredirect
+# RewriteCond %{HTTP_USER_AGENT} "android|blackberry|ipad|iphone|ipod|iemobile|opera mobile|palmos|webos|googlebot-mobile" [NC]
+# RewriteRule ^yourdomain.com$ http://mobile.yourdomain.com [R,L]
+
+## Gzip and Compression
+# (Ref1) Add custom mime type, to be able to use it in the 'AddOutputFilterByType' declaration (gzip font-face files: http://www.phpied.com/gzip-your-font-face-files/)
+# (Ref2) Proper svg serving. Required for svg webfonts on iPad (http://twitter.com/FontSquirrel/status/14855840545)
+# (Ref3) Apache 1.3 uses mod_gzip while Apache 2.x uses mod_deflate (http://httpd.apache.org/docs/2.0/mod/mod_deflate.html)
+# (Ref4) Enable the compression (gzip) for any type of content SetOutputFilter DEFLATE Or (alternatively) define which filetypes should pass through the DEFLATE output filter (gzip compression)
+# (Ref5) Turn-off (or restrict) compression to files of type text/html for known problematic web browsers
+# (Ref6) File types not to be compressed
+# (Ref7) Make sure proxies don't deliver the wrong content
+# (Ref8) Allow access from all domains for webfonts (alternatively you could only whitelist your subdomains like "sub.domain.com")
 <IfModule mod_headers.c>
-    <IfModule mod_mime.c>
-        # Add custom mime type, to be able to use it in the 'AddOutputFilterByType' declaration (gzip font-face files: http://www.phpied.com/gzip-your-font-face-files/)
+    <IfModule mod_mime.c> #Ref1
         AddType application/vnd.ms-fontobject .eot
         AddType font/truetype .ttf
         AddType font/opentype .otf
-        AddType font/woff .woff
-        # Proper svg serving. Required for svg webfonts on iPad (http://twitter.com/FontSquirrel/status/14855840545)
-        AddType image/svg+xml svg svgz
+        AddType font/woff .woff 
+        AddType image/svg+xml svg svgz #Ref2
         AddEncoding gzip svgz
     </IfModule>
-
-    # Apache 1.3 uses mod_gzip while Apache 2.x uses mod_deflate (http://httpd.apache.org/docs/2.0/mod/mod_deflate.html)
-    <IfModule mod_deflate.c>
-        # Enable the compression (gzip) for any type of content
-        #SetOutputFilter DEFLATE
-        # Or (alternatively) define which filetypes should pass through the DEFLATE output filter (gzip compression)
-        AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json
-        # html, xml, css, and js above, webfonts and svg below
+    <IfModule mod_deflate.c> #Ref3
+        AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/x-javascript application/json #Ref4
         <FilesMatch "\.(ttf|otf|woff|eot|svg|svgz)$" >
             SetOutputFilter DEFLATE
         </FilesMatch>
-
-        # Turne-off (or restrict) compression to files of type text/html for known problematic web browsers
-        BrowserMatch ^Mozilla/4 gzip-only-text/html
+        BrowserMatch ^Mozilla/4 gzip-only-text/html #Ref5
         BrowserMatch ^Mozilla/4\.0[678] no-gzip
-        #BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
-        # NOTE: Due to a bug in mod_setenvif up to Apache 2.0.48
-        # the above regex won't work. You can use the following
-        # workaround to get the desired effect:
+## BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+# NOTE: Due to a bug in mod_setenvif up to Apache 2.0.48 the above regex won't work. You can use the following workaround to get the desired effect:
         BrowserMatch \bMSI[E] !no-gzip !gzip-only-text/html
 
-        # File types not to be compressed
-        SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary
+        SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png)$ no-gzip dont-vary #Ref6
         SetEnvIfNoCase Request_URI \.(?:swf|flv|pdf)$ no-gzip dont-vary
         SetEnvIfNoCase Request_URI \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary
         SetEnvIfNoCase Request_URI \.(?:avi|mov)$ no-gzip dont-vary
         SetEnvIfNoCase Request_URI \.(?:mp3|mp4)$ no-gzip dont-vary
 
-        # Make sure proxies don't deliver the wrong content
-        Header append Vary User-Agent env=!dont-vary
+        Header append Vary User-Agent env=!dont-vary #Ref7
 
     </IfModule>
-    # Allow access from all domains for webfonts (alternatively you could only whitelist your subdomains like "sub.domain.com")
-    <FilesMatch "\.(ttf|otf|eot|woff|font.css)$">
+    <FilesMatch "\.(ttf|otf|eot|woff|font.css)$"> #Ref8
         Header set Access-Control-Allow-Origin "*"
     </FilesMatch>
 </IfModule>
 
-# Force the latest IE version, in various cases when it may fall back to IE7 mode
-#  github.com/rails/rails/commit/123eb25#commitcomment-118920
+## Setup Custom Headers
+# Header set P3P "policyref=\"http://www.yourdomain.com/w3c/p3p.xml\""
+# Header set X-Pingback "http://www.yourdomain.com/xmlrpc.php"
+# Header set Content-Language "en-US"
+# Header set Vary "Accept-Encoding"
+
+## Force the latest IE version, in various cases when it may fall back to IE7 mode. (http://github.com/rails/rails/commit/123eb25#commitcomment-118920)
 # Use ChromeFrame if it's installed for a better experience for the poor IE folk
 <IfModule mod_setenvif.c>
   <IfModule mod_headers.c>
@@ -109,22 +122,28 @@ RewriteRule ^yourdomain.com$ http://mobile.yourdomain.com [R,L]
   </IfModule>
 </IfModule>
 
-# Allow combination of Javascript and CSS Stylesheets
+## Add values from HTTP Headers
+# SetEnvIfNoCase ^If-Modified-Since$ "(.+)" HTTP_IF_MODIFIED_SINCE=$1
+# SetEnvIfNoCase ^If-None-Match$ "(.+)" HTTP_IF_NONE_MATCH=$1
+# SetEnvIfNoCase ^Cache-Control$ "(.+)" HTTP_CACHE_CONTROL=$1
+# SetEnvIfNoCase ^Connection$ "(.+)" HTTP_CONNECTION=$1
+# SetEnvIfNoCase ^Keep-Alive$ "(.+)" HTTP_KEEP_ALIVE=$1
+# SetEnvIfNoCase ^Authorization$ "(.+)" HTTP_AUTHORIZATION=$1
+# SetEnvIfNoCase ^Cookie$ "(.+)" HTTP_MY_COOKIE=$1
+
+## Allow combination of Javascript and CSS Stylesheets
 # ie. Inside of script.combined.js you could have
 #   <!--#include file="jquery-1.4.2.js" -->
 #   <!--#include file="jquery.idletimer.js" -->
-# and they would be included into this single file
-# this is not in use in the boilerplate as it stands. you may
-#   choose to name your files in this way for this advantage
-#   or concatenate and minify them manually.
+# and they would be included into this single file this is not in use in the boilerplate as it stands. you may choose to name your files in this way for this advantage or concatenate and minify them manually.
 # Disabled by default.
-
+# 
 # <FilesMatch "\.combined\.(js|css)$">
 #         Options +Includes
 #         SetOutputFilter INCLUDES
 # </FilesMatch>
 
-# Setup Cache-Control and Expires by File Types
+## Setup Cache-Control and Expires by File Types
 <IfModule mod_expires.c>
     <FilesMatch "\.(gif|jpg|jpeg|png|swf|flv|pdf|ico|avi|mov|ppt|doc|mp3|wmv|wav|txt|css|js|html?|php|xml|eot|ttf|otf|woff)$">
         ExpiresActive On
@@ -134,7 +153,6 @@ RewriteRule ^yourdomain.com$ http://mobile.yourdomain.com [R,L]
         ExpiresDefault "access plus 1 year"
         FileETag Size
     </FilesMatch>
-
     <FilesMatch "\.(gif|jpg|jpeg|png|swf|flv|ico|pdf|avi|mov|ppt|doc|mp3|wmv|wav|txt|eot|ttf|otf|woff)$">
         Header append Cache-Control: public
     </FilesMatch>
@@ -143,7 +161,7 @@ RewriteRule ^yourdomain.com$ http://mobile.yourdomain.com [R,L]
     </FilesMatch>
 </IfModule>
 
-# Caching by Content Type using mod_expires.c
+## Caching by Content Type using mod_expires.c
 <IfModule mod_expires.c>
 ExpiresActive On
 ExpiresDefault A86400
@@ -160,9 +178,9 @@ ExpiresByType application/pdf A604800
 ExpiresByType text/html A900
 </IfModule>
 
-# Cache-Control by File Type
+## Cache-Control by File Type
 <FilesMatch "\.(flv|gif|jpg|jpeg|png|ico|swf)$">
-    Header set Cache-Control "max-age=7257600" # 3 Month
+    Header set Cache-Control "max-age=7257600" # 3 Months
 </FilesMatch>
 <FilesMatch "\.(js|css|pdf|txt)$">
     Header set Cache-Control "max-age=604800" # 1 Week
@@ -175,18 +193,49 @@ ExpiresByType text/html A900
     Header unset Expires
     Header unset Last-Modified
     FileETag None
-    Header unset Pragma # NONE
+    Header unset Pragma # No Caching
 </FilesMatch>
 
-# Redirect old links or pages using 301
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteBase /
-	RewriteRule ^somedirectory/(.*)$ http://yourdomain.com/page.php [L,R=301] # Redirect Directory to Specific Page
-	RewriteRule ^page.html$ http://www.yourdomain.com/newpage.php [L,R=301] # Redirect Specific Page to Specific Page
-</IfModule>
+## Redirect old links or pages using 301
+# <IfModule mod_rewrite.c>
+# 	RewriteEngine On
+# 	RewriteBase /
+#	RewriteRule ^somedirectory/(.*)$ http://yourdomain.com/page.php [L,R=301] # Redirect Directory to Specific Page
+#	RewriteRule ^page.html$ http://www.yourdomain.com/newpage.php [L,R=301] # Redirect Specific Page to Specific Page
+# </IfModule>
 
-# Redirect Bad Bots and Spammers
+## Alternative Redirection
+# Redirect 301 / http://www.yourdomain.com
+# RedirectMatch 301 /blog(.*) /$1
+# RedirectMatch 302 ^/ /temporary-offline.html
+RedirectMatch 301 ^/(.*)$ http://www.yourdomain.com/$1
+
+
+## Protect your php.ini
+# (http://www.askapache.com/htaccess/htaccess.html#mod_rewrite-examples)
+# <FilesMatch "^php5?\.(ini|cgi)$">
+#  Order Deny,Allow
+#  Deny from All
+#  Allow from env=REDIRECT_STATUS
+# </FilesMatch>
+
+## Deny Request Methods
+# (http://www.askapache.com/htaccess/htaccess.html#mod_rewrite-examples)
+# RewriteCond %{REQUEST_METHOD} !^(GET|HEAD|OPTIONS|POST|PUT)
+# RewriteRule .* - [F]
+
+## Refuse Hotlinking of Files and Images
+# RewriteCond %{HTTP_REFERER} !^$
+# RewriteCond %{HTTP_REFERER} !^http://(www\.)?yourdomain.com/.*$ [NC]
+# RewriteRule \.(gif|jpg|swf|flv|png)$ http://www.yourdomain.com/feed.gif [R=302,L]
+
+## Alternative Hotlinking Fix
+# RewriteCond %{HTTP_REFERER} !^$
+# RewriteCond %{REQUEST_URI} !^/(wp-login.php|wp-admin/|wp-content/plugins/|wp-includes/).* [NC]
+# RewriteCond %{HTTP_REFERER} !^http://www.askapache.com.*$ [NC]
+# RewriteRule \.(ico|pdf|flv|jpg|jpeg|mp3|mpg|mp4|mov|wav|wmv|png|gif|swf|css|js)$ - [F,NS,L]
+
+## Redirect Bad Bots and Spammers
 <IfModule mod_rewrite.c>
 RewriteEngine On
 RewriteBase /
@@ -293,3 +342,20 @@ RewriteCond %{HTTP_USER_AGENT} ^WWWOFFLE [OR]
 RewriteCond %{HTTP_USER_AGENT} ^Xaldon\ WebSpider [OR]
 RewriteCond %{HTTP_USER_AGENT} ^Zeus
 </IfModule>
+
+## Block Common Exploits
+# *Caution* These fixes can break plugins and modules. Use with caution please.
+# RewriteCond %{REQUEST_URI} !^/(wp-login.php|wp-admin/|wp-content/plugins/|wp-includes/).* [NC]
+# RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ ///.*\ HTTP/ [NC,OR]
+# RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /.*\?\=?(http|ftp|ssl|https):/.*\ HTTP/ [NC,OR]
+# RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /.*\?\?.*\ HTTP/ [NC,OR]
+# RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /.*\.(asp|ini|dll).*\ HTTP/ [NC,OR]
+# RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /.*\.(htpasswd|htaccess|aahtpasswd).*\ HTTP/ [NC]
+# RewriteRule .* - [F,NS,L]
+
+## Forbid Proxy Servers
+# RewriteCond %{REQUEST_METHOD} =POST
+# RewriteCond %{HTTP:VIA}%{HTTP:FORWARDED}%{HTTP:USERAGENT_VIA}%{HTTP:X_FORWARDED_FOR}%{HTTP:PROXY_CONNECTION} !^$ [OR]
+# RewriteCond %{HTTP:XPROXY_CONNECTION}%{HTTP:HTTP_PC_REMOTE_ADDR}%{HTTP:HTTP_CLIENT_IP} !^$
+# RewriteCond %{REQUEST_URI} !^/(wp-login.php|wp-admin/|wp-content/plugins/|wp-includes/).* [NC]
+# RewriteRule .* - [F,NS,L]
