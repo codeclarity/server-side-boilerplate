@@ -1,0 +1,25 @@
+#!/bin/sh
+
+## sync(.sh)
+## @author Hargobind Khalsah (with Revisions by Joshua Canfield)
+## @description sync should be in your remote GIT post-hooks directory with a chmod of +755.
+
+cd "$(dirname $0)/.."
+
+export GIT_DIR="."
+export GIT_WORK_TREE=".."
+
+if [ "$(git symbolic-ref -q HEAD)" != "refs/heads/live" ]; then
+  echo "Not on live, not syncing changes"
+  exit 1
+elif ! git diff-index --exit-code --quiet --cached HEAD --; then
+  echo "Changes exist in index, not syncing"
+  exit 1
+elif [ -z "$(git status --porcelain)" ]; then
+  echo "No changes to commit"
+  exit 0
+else
+  git add --all $GIT_WORK_TREE
+  git commit -m "$(date "+SYNC %F %T")"
+  exit 0
+fi
