@@ -11,7 +11,6 @@ $local_branch="master";
 $live_branch="live";
 $remote_name="deploy";
 $master_name="origin";
-$remote_dir="/home/codeclarity/icodeclarity.com";
 
 class Deploy {
 	
@@ -103,18 +102,15 @@ class Deploy {
 // Deployment Execution
 
 // Example Deployment
-// $deploy = new Deploy('/var/www/foobar.com');
-// $deploy->post_deploy = function() use ($deploy) {
-// exec('curl http://www.foobar.com/wp-admin/upgrade.php?step=upgrade_db'); // hit the wp-admin page to update any db changes
-// $deploy->log('Updating wordpress database... ');
-// };
-// $deploy->execute();
+$deploy = new Deploy('/home/codeclarity/icodeclarity.com');
 
-$deploy = new Deploy($remote_dir);
-$deploy->post_deploy = function() use ($deploy) {
-	$this->log('Deployment Finished.');
+//$deploy->post_deploy = function() use ($deploy) {
+  // hit the wp-admin page to update any db changes
+//  exec('curl http://www.icodeclarity.com/index.php');
+//  $deploy->log('Updating wordpress database... ');
+//};
 
-};
 $deploy->execute_deployment();
+
 
 ?>
