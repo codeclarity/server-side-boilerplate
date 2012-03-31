@@ -6,6 +6,13 @@
 
 date_default_timezone_set('America/Denver');
 
+// Repository and Branch Variables
+$local_branch="master";
+$live_branch="live";
+$remote_name="deploy";
+$master_name="origin";
+$remote_dir="/home/codeclarity/icodeclarity.com";
+
 class Deploy {
 	
 	// Callback function after Deployment
@@ -14,7 +21,7 @@ class Deploy {
 	private $_log = 'deployments.log';
 	private $_date_format = 'Y-m-d H:i:sP';
 	
-	private $_branch = 'master';
+	private $_branch = 'live'; // Live branch is used on Remote Server to push updated client-side files to then merge with master on remote repository
 	private $_remote = 'origin';
 	
 	// Construct Options for script
@@ -68,23 +75,23 @@ class Deploy {
 	          $this->log('Changing working directory... '.implode(' ', $output));
 
 	          // Discard any changes to tracked files since our last deploy
-	          exec('git reset --hard HEAD', $output);
-	          $this->log('Reseting repository... '.implode(' ', $output));
+	          exec('git pull origin master', $output);
+	          $this->log('Pulling from Master Repository... '.implode(' ', $output));
 
 	          // Update the local repository
-	          exec('git pull '.$this->_remote.' '.$this->_branch, $output);
-	          $this->log('Pulling in changes... '.implode(' ', $output));
+	          //exec('git pull '.$this->_remote.' '.$this->_branch, $output);
+	          //$this->log('Pulling in changes... '.implode(' ', $output));
 
 	          // Secure the .git directory
 	          exec('chmod -R og-rx .git');
 	          $this->log('Securing .git directory... ');
 
-	          if (is_callable($this->post_deploy))
-	          {
-	              call_user_func($this->post_deploy, $this->_data);
-	          }
+	          //if (is_callable($this->post_deploy))
+	          //{
+	          //    call_user_func($this->post_deploy, $this->_data);
+	          //}
 
-	          $this->log('Deployment successful.');
+	          $this->log('Deployment successful. Post Receive callbacks have been initiated.');
 	      }
 	      catch (Exception $e)
 	      {
@@ -95,15 +102,19 @@ class Deploy {
 
 // Deployment Execution
 
-$deploy = new Deploy('/var/www/foobar.com');
+// Example Deployment
+// $deploy = new Deploy('/var/www/foobar.com');
+// $deploy->post_deploy = function() use ($deploy) {
+// exec('curl http://www.foobar.com/wp-admin/upgrade.php?step=upgrade_db'); // hit the wp-admin page to update any db changes
+// $deploy->log('Updating wordpress database... ');
+// };
+// $deploy->execute();
 
+$deploy = new Deploy($remote_dir);
 $deploy->post_deploy = function() use ($deploy) {
-  // hit the wp-admin page to update any db changes
-  exec('curl http://www.foobar.com/wp-admin/upgrade.php?step=upgrade_db');
-  $deploy->log('Updating wordpress database... ');
+	$this->log('Deployment Finished.');
+
 };
-
-$deploy->execute();
-
+$deploy->execute_deployment();
 
 ?>

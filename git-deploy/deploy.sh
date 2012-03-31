@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ## Deploy.sh
-## @author Joshua Canfield <www.icodeclarity.com>
+## @author Hargobind Khalsah (with Revisions by Joshua Canfield)
 ## @description deploy.sh should be in the root directory of your project with a chmod of +755. This script will initiate the deployment and push to BitBucket along with receiving new changes from the Remote Repository.
 
 LOCAL_BRANCH="master"
