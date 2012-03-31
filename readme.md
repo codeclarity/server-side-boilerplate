@@ -11,6 +11,7 @@ also including a complete htaccess file and robots.txt.
 * Includes .htaccess (Features include standard setup with redirection options, automatic UTF-8, gzip compress, etag revisions, cache-control by object, mobile detection and more).
 * TODO- Separate HTML Files by Doctype and section off each portion of <head>, include more valuable Header inserts, possibly change the project over
 to the 'HTML Essentials Skeleton' to include a Performance and Speed induced .htaccess, robots.txt and more.
+* **Now includes** a GIT Deployment and Synchronization script. (This is in it's initial testing phases and will work with BitBucket and GitHub as of now).
 * Suggestions welcome. <support@icodeclarity.com>
 
 # Mission
