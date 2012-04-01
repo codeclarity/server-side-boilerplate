@@ -74,9 +74,10 @@ class Deploy {
 	          $this->log('Changing working directory... '.implode(' ', $output));
 
 	          // Discard any changes to tracked files since our last deploy
-	          exec('git pull origin master', $output);
-	          $this->log('Pulling from Master Repository... '.implode(' ', $output));
-
+	          //exec('git pull origin master', $output);
+	          exec('/home/codeclarity/icodeclarity.com/.git/hooks/post-receive.sh', $output);
+                  $this->log('Pulling from Master Repository... '.implode(' ', $output));
+                  echo "Running Post Receive and Synchronization scripts...<br>";
 	          // Update the local repository
 	          //exec('git pull '.$this->_remote.' '.$this->_branch, $output);
 	          //$this->log('Pulling in changes... '.implode(' ', $output));
@@ -84,6 +85,7 @@ class Deploy {
 	          // Secure the .git directory
 	          exec('chmod -R og-rx .git');
 	          $this->log('Securing .git directory... ');
+                  echo "Securing GIT Repository...<br>";
 
 	          //if (is_callable($this->post_deploy))
 	          //{
@@ -91,7 +93,8 @@ class Deploy {
 	          //}
 
 	          $this->log('Deployment successful. Post Receive callbacks have been initiated.');
-	      }
+	          echo "Deployment was successful.";
+              }
 	      catch (Exception $e)
 	      {
 	          $this->log($e, 'ERROR');
