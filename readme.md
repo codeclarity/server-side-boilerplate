@@ -1,5 +1,7 @@
 # Server-side Boilerplate (for HTML5 Boilerplate)
 
+__This repository is now defunct and has not been updated in 6 years__
+
 A complete server-side starting point for your HTML and Web Projects. Currently aimed at the Apache Server and uses techniques in the header of each HTML file,
 also including a complete htaccess file and robots.txt.
 
